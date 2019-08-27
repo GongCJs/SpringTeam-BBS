@@ -1,0 +1,71 @@
+<html>
+<head>
+    <title>主页面</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+</head>
+
+<body bgcolor="#FFFFFF" text="#000000">
+<p>&nbsp;</p>
+<table width="500" border="0" align="center">
+    <tr>
+        <td height="34"><font size="4"><b> <a href="/message/fabu">发布信息</a></b></font> &nbsp;
+            &nbsp; &nbsp; <a href="/user/logout.do"><b><font size="4"> 退出系统</font></b></a></td>
+    </tr>
+    <tr>
+        <td height="32" valign="bottom"><font size="4"><b>留言信息:</b></font></td>
+    </tr>
+
+    <tr>
+        <td>
+            <table id="result_table" width="100%" border="1" bordercolor="#3399CC" cellspacing="1">
+                <tr align="center">
+                    <td width="65">发送人</td>
+                    <td width="95" align="center">发送时间</td>
+                    <td width="65">接收人</td>
+                    <td width="230">信息内容</td>
+                    <td>&nbsp;</td>
+                </tr>
+            </table>
+            <p>&nbsp;</p>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p>&nbsp;</p>
+        </td>
+    </tr>
+</table>
+</body>
+<script src="/common/js/jquery-1.8.3.min.js"></script>
+<script src="/common/js/format.js"></script>
+
+<script>
+    $(function () {
+        $.ajax({
+            type: "get",
+            url: "/message/findAll.do",
+            datatype: "json",
+            success: function (result) {
+                MessageInfo(result.data);
+            },
+            error: function (result) {
+                window.location = result.responseText;
+            }
+        });
+    })
+
+    function MessageInfo(result) {
+        var $tab = $("#result_table");
+        for (var index in result) {
+            var $tr = $("<tr align='center'></tr>");
+            var $td = "<td width='65'>" + result[index].uidFrom + "</td>" +
+                "<td width='95' align='center'>" + (result[index].createTime).substring(0, 10) + "</td>" +
+                "<td width='65'>" + result[index].uidTo + "</td>" +
+                "<td width='230'>" + result[index].mcontent + "</td>" +
+                "<td>&nbsp;</td>";
+            $tr.append($td);
+            $tab.append($tr);
+        }
+    }
+</script>
+</html>

@@ -1,0 +1,86 @@
+<html>
+<head>
+    <title>登录界面</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+</head>
+
+<body bgcolor="#FFFFFF" text="#000000">
+<p>&nbsp;</p>
+<form id="from_regist">
+    <table width="258" border="1" align="center" cellspacing="1" bordercolor="#3399CC">
+        <tr align="center">
+            <td colspan="2" height="59"><font size="6"><b><font color="#330099" size="5">留言板用户注册</font></b></font></td>
+        </tr>
+        <tr>
+            <td width="96" align="right">姓名:</td>
+            <td width="154">
+                <input type="text" onblur="checkUsername()" id="uId" name="uId" size="15">
+            </td>
+        </tr>
+        <tr>
+            <td width="96" align="right">口令:</td>
+            <td width="154">
+                <input type="password" name="uPassword" size="15">
+            </td>
+        </tr>
+        <tr align="center">
+            <td colspan="2">
+                <input type="button" disabled="true" id="but_regist" name="oper" value=" 注  册 ">
+                <input type="reset" id="but_reset" name="reset" value=" 复  位 ">
+            </td>
+        </tr>
+    </table>
+</form>
+</body>
+<script src="/common/js/jquery-1.8.3.min.js"></script>
+<script>
+    /*login*/
+    $(function(){
+        $("#but_regist").click(function () {
+            $.ajax({
+                url:'/user/regist.do',
+                data:$("#from_regist").serialize(),
+                type:'post',
+                datatype:'json',
+                success:function (result) {
+                    if(result.status == 200){
+                        var flag = confirm("注册成功，是否跳转到登录界面进行登录？");
+                        if(flag){
+                            //跳转到登录界面
+                            window.location = "/user/login";
+                        }else {
+                            //清空注册信息
+                            $("#but_reset").trigger("click");
+                            $("#but_regist").attr("disabled",true);
+                        }
+                    }else{
+                        //注册失败
+                        alert(result.msg);
+                    }
+                }
+            })
+        })
+    })
+    function checkUsername() {
+        //验证用户信息
+        var uId = $("#uId").val();
+        if (uId == null || uId ==""){
+            return;
+        }
+        param = {
+            uId : uId
+        }
+        $.get("/user/checkUsername.do",param,function (result) {
+            if(result.status == 200){
+                $("#but_regist").attr("disabled",false);
+            }else{
+                alert(result.msg);
+                var $uId = $("#uId");
+                $uId.val("");
+                $uId.focus();
+                $("#but_regist").attr("disabled",true);
+            }
+        })
+    }
+</script>
+</html>
